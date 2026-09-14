@@ -68,3 +68,26 @@ Devido às restrições de tamanho de arquivo do GitHub (limite de 100 MB), os a
 
 * **Arquivos Ignorados (`.gitignore`):** Todos os arquivos `.csv` presentes nos diretórios de bases anuais (`Dados/brutos`) foram incluídos no `.gitignore`. Foram deixadas apenas as as tabelas exportadas do modelo estrela.
 * **Reprodutibilidade:** Para reproduzir o projeto, os scripts Python (`.py` ou `.ipynb`) estão versionados. O usuário precisa apenas baixar os dados brutos originais ([text](https://dadosabertos.saude.gov.br/dataset/bps)), inseri-los no diretório indicado no script e executar o código para que o pipeline de ETL gere automaticamente a base limpa e o modelo estrela localmente.
+
+### 8. Estrutura do Dashboard (Power BI)
+
+O painel foi estruturado em três visões (páginas) principais, garantindo uma navegação lógica que parte de indicadores macroscópicos para análises granulares de produtos e distribuição geográfica.
+
+#### 📊 Página 1: Visão Executiva e Tendências (Macro)
+**Objetivo:** Apresentar o panorama geral de gastos, comportamento temporal e a distribuição orçamentária pelas categorias estruturais de compra.
+* **Cartões (Cards):** Destacam os KPIs fundamentais do projeto: Volume Financeiro Total (R$), Quantidade de Pedidos, Quantidade de Itens Comprados e a % de Gasto com Medicamentos Genéricos.
+* **Gráfico de Linhas (Evolução Temporal):** Eixo X com hierarquia de Ano/Mês e Eixo Y com Total Gasto. Permite identificar picos de requisição e avaliar a sazonalidade ao longo dos anos.
+* **Gráfico de Barras Horizontais (Modalidade de Compra):** Demonstra rapidamente quais modalidades de licitação (ex: Pregão Eletrônico, Dispensa) mobilizam o maior volume orçamentário.
+* **Gráfico de Rosca (Tipo de Compra):** Ilustra a proporção do orçamento consumida pelas diferentes tipificações de compra registradas no sistema.
+
+#### 📦 Página 2: Análise de Produtos e Fornecedores (Curva ABC e Risco)
+**Objetivo:** Identificar os produtos de maior impacto financeiro e monitorar o nível de dependência do governo em relação a fornecedores específicos.
+* **Tabela/Matriz (Curva A - Produtos):** Exibe a listagem dos produtos ordenados do maior para o menor Total Gasto, permitindo identificar a minoria de itens que consome a maior parcela do orçamento público (Top N Produtos).
+* **Gráfico de Barras Horizontais (Top Fornecedores):** Ranqueia os maiores recebedores de recursos. É o principal indicador visual para detectar riscos de concentração de mercado ou potenciais monopólios no fornecimento de insumos críticos.
+* **Gráfico de Dispersão (Preço x Volume):** Cruza a Quantidade de Itens Comprados (Eixo X) com o Total Gasto (Eixo Y) por produto, destacando visualmente itens de altíssimo custo unitário ou de volume massivo.
+
+#### 🗺️ Página 3: Visão Geográfica e Institucional
+**Objetivo:** Mapear para onde os recursos estão sendo destinados territorialmente e entender o comportamento das diferentes esferas governamentais.
+* **Gráfico de Barras Horizontais (Gasto por Estado - UF):** Substituindo a visão tradicional de mapa, este gráfico ranqueia de forma precisa e imediata os estados que mais demandam orçamento absoluto.
+* **Matriz de Calor (Modalidade por UF):** Cruza os Estados nas linhas com as Modalidades de Compra nas colunas. Utiliza formatação condicional de cores para evidenciar se determinados estados possuem concentrações anômalas em métodos como "Dispensa de Licitação".
+* **Gráfico de Barras Horizontais (Esfera Institucional):** Compara o volume financeiro movimentado pelas esferas Municipal, Estadual e Federal, demonstrando qual nível de governo tem maior peso nas aquisições catalogadas.
