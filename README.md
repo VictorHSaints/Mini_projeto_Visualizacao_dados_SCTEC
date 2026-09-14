@@ -51,3 +51,20 @@ Para não inviabilizar a análise numérica da coluna `capacidade` (que continha
 * **Preenchimento:** Os valores nulos da coluna numérica `capacidade` foram substituídos pelos números extraídos, após conversão de formato (troca de vírgula por ponto). Valores nulos da coluna `unidade_medida` foram substituídos pelos textos extraídos.
 * **Tratamento de Resíduos:** Após a extração, os itens que efetivamente não possuíam capacidade tiveram a `capacidade` preenchida com `0` (mantendo o tipo *float* da coluna) e a `unidade_medida` como **`SEM_MEDIDA`**.
 
+### 6. Modelagem de Dados (Star Schema)
+Para otimizar a performance dos cálculos no dashboard e garantir as melhores práticas de Business Intelligence, o arquivo consolidado foi transformado em um Modelo Estrela (*Star Schema*).
+
+O modelo separa os atributos descritivos das métricas quantitativas, resultando na seguinte estrutura:
+* **Tabelas de Dimensão (Descritivas):** Receberam chaves substitutas numéricas (*Surrogate Keys* - ex: `id_produto`, `id_instituicao`) para otimizar os relacionamentos. Foram geradas:
+  * `Dim_Instituicao`: Informações sobre os compradores (Nome, Esfera, UF, Município).
+  * `Dim_Fornecedor`: Informações sobre os vendedores (CNPJ, Razão Social).
+  * `Dim_Fabricante`: Informações sobre as marcas fabricantes.
+  * `Dim_Produto`: Características técnicas dos itens (Código, Descrição, Genérico, Anvisa, Capacidade, Unidade de Medida).
+  * `Dim_Tempo`: Calendário completo gerado a partir das datas do projeto (Ano, Mês, Dia, Trimestre), utilizando o padrão numérico `YYYYMMDD` como chave.
+* **Tabela Fato (Métricas):** A `Fato_Compras` centraliza os eventos numéricos (`qtd_itens_comprados`, `preco_unitario`, `preco_total`), armazenando apenas os IDs das dimensões associadas. Utilizamos *Role-Playing Dimensions* ao incluir duas chaves de tempo na Fato (`id_tempo_compra` e `id_tempo_insercao`) para permitir análises temporais distintas utilizando o mesmo calendário.
+
+### 7. Controle de Versão e Gestão de Arquivos Grandes
+Devido às restrições de tamanho de arquivo do GitHub (limite de 100 MB), os arquivos de dados brutos originais e as tabelas finais exportadas não foram versionados no repositório.
+
+* **Arquivos Ignorados (`.gitignore`):** Todos os arquivos `.csv` presentes nos diretórios de bases anuais (`Dados/brutos`) foram incluídos no `.gitignore`. Foram deixadas apenas as as tabelas exportadas do modelo estrela.
+* **Reprodutibilidade:** Para reproduzir o projeto, os scripts Python (`.py` ou `.ipynb`) estão versionados. O usuário precisa apenas baixar os dados brutos originais ([text](https://dadosabertos.saude.gov.br/dataset/bps)), inseri-los no diretório indicado no script e executar o código para que o pipeline de ETL gere automaticamente a base limpa e o modelo estrela localmente.
